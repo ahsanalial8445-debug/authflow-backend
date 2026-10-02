@@ -3,6 +3,17 @@ const generateToken = require("../utils/generateToken");
 
 const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
 
+const safeErrorMessage = (error) => {
+  let message = String(error.message || "Unexpected registration error");
+  const secrets = [process.env.MONGO_URI, process.env.JWT_SECRET].filter(Boolean);
+
+  for (const secret of secrets) {
+    message = message.replaceAll(secret, "[redacted]");
+  }
+
+  return message.replace(/(mongodb(?:\+srv)?:\/\/)[^@\s]+@/gi, "$1[redacted]@");
+};
+
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
@@ -54,8 +65,23 @@ const register = async (req, res) => {
         message: "An account with this email already exists",
       });
     }
-    console.error("Register error:", err.message);
-    res.status(500).json({ success: false, message: "Server error, please try again later" });
+    const message = safeErrorMessage(err);
+    console.error("Registration error:", {
+      name: err.name,
+      message,
+      code: err.code,
+      stack:
+        process.env.NODE_ENV === "production"
+          ? undefined
+          : safeErrorMessage({ message: err.stack }),
+    });
+    res.status(500).json({
+      success: false,
+      message:
+        process.env.NODE_ENV === "production"
+          ? "Server error, please try again later"
+          : message,
+    });
   }
 };
 

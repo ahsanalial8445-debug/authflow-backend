@@ -1,18 +1,26 @@
 {
-  "name": "authflow-backend",
+  "name": "backend",
   "version": "1.0.0",
-  "description": "Express + MongoDB + JWT backend for the AuthFlow authentication system",
-  "main": "server.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
-    "bcryptjs": "^3.0.2",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.1"
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.10.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
