@@ -2,6 +2,7 @@ const express = require("express");
 const {
   createTask,
   getTasks,
+  getTaskStats,
   getTask,
   updateTask,
   updateTaskStatus,
@@ -13,6 +14,7 @@ const router = express.Router();
 
 router.use(protect);
 router.route("/").post(createTask).get(getTasks);
+router.get("/stats", getTaskStats);
 router.patch("/:id/status", updateTaskStatus);
 router.route("/:id").get(getTask).put(updateTask).delete(deleteTask);
 

@@ -2,7 +2,7 @@
 const notFound = (req, res) => {
   res.status(404).json({
     success: false,
-    message: `Route not found: ${req.method} ${req.originalUrl}`,
+    message: "Route not found",
   });
 };
 
@@ -12,11 +12,9 @@ const notFound = (req, res) => {
 const errorHandler = (err, req, res, next) => {
   console.error("Unhandled error:", err.message);
 
-  // Mongoose: malformed ObjectId (e.g. /users/abc)
+  // Mongoose: malformed ObjectId
   if (err.name === "CastError") {
-    return res
-      .status(400)
-      .json({ success: false, message: `Invalid ${err.path}: ${err.value}` });
+    return res.status(400).json({ success: false, message: "Invalid ID" });
   }
 
   // Mongoose: schema validation failed (minlength, required, match...)
@@ -36,9 +34,12 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  res.status(err.statusCode || 500).json({
+  const statusCode = err.statusCode && err.statusCode >= 400 && err.statusCode < 500
+    ? err.statusCode
+    : 500;
+  res.status(statusCode).json({
     success: false,
-    message: err.message || "Server error, please try again later",
+    message: statusCode === 500 ? "Server error, please try again later" : err.message,
   });
 };
 

@@ -6,6 +6,7 @@ const {
   login,
   logout,
   getMe,
+  updateMe,
 } = require("../controllers/authController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -16,5 +17,6 @@ router.post("/logout", logout);
 
 // Protected route (JWT required)
 router.get("/me", protect, getMe);
+router.patch("/me", protect, updateMe);
 
 module.exports = router;

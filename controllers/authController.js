@@ -65,6 +65,14 @@ const register = async (req, res) => {
         message: "An account with this email already exists",
       });
     }
+    if (err.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: Object.values(err.errors)
+          .map((validationError) => validationError.message)
+          .join(", "),
+      });
+    }
     const message = safeErrorMessage(err);
     console.error("Registration error:", {
       name: err.name,
@@ -77,10 +85,7 @@ const register = async (req, res) => {
     });
     res.status(500).json({
       success: false,
-      message:
-        process.env.NODE_ENV === "production"
-          ? "Server error, please try again later"
-          : message,
+      message: "Server error, please try again later",
     });
   }
 };
@@ -130,6 +135,20 @@ const getMe = async (req, res) => {
   res.status(200).json({ success: true, user: req.user });
 };
 
+const updateMe = async (req, res) => {
+  const name = typeof req.body?.name === "string" ? req.body.name.trim() : "";
+  if (name.length < 2 || name.length > 50) {
+    return res.status(400).json({
+      success: false,
+      message: "Name must be between 2 and 50 characters",
+    });
+  }
+
+  req.user.name = name;
+  await req.user.save();
+  res.status(200).json({ success: true, user: req.user });
+};
+
 // @desc    Logout
 // @route   POST /api/auth/logout
 // @access  Public
@@ -141,4 +160,4 @@ const logout = async (req, res) => {
   res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 
-module.exports = { register, login, getMe, logout };
+module.exports = { register, login, getMe, updateMe, logout };
