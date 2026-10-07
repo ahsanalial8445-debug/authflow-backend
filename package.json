@@ -21,6 +21,7 @@
     "mongoose": "^9.10.3"
   },
   "devDependencies": {
+    "mongodb-memory-server": "^11.3.0",
     "nodemon": "^3.1.14"
   }
 }
